@@ -12,8 +12,8 @@
       include_vars: 'postgres.yml'
   vars:
     pulp_default_admin_password: admin
-    pulp_source_dir: '{{ ansible_env.TRAVIS_BUILD_DIR | dirname }}/pulpcore/'
-    pulp_plugin_source_dir: "{{ ansible_env.TRAVIS_BUILD_DIR | dirname }}/pulpcore-plugin"
+    #pulp_source_dir: '{{ ansible_env.TRAVIS_BUILD_DIR | dirname }}/pulpcore/'
+    #pulp_plugin_source_dir: "{{ ansible_env.TRAVIS_BUILD_DIR | dirname }}/pulpcore-plugin"
     pulp_install_plugins:
       pulp-cookbook:
         app_label: "cookbook"
@@ -37,5 +37,4 @@
     - pulp-database
     - pulp-workers
     - pulp-resource-manager
-    - pulp-webserver
     - pulp-content

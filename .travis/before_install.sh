@@ -36,6 +36,7 @@ black --check --diff .
 # Lint code.
 flake8 --config flake8.cfg
 
+
 cd ..
 git clone --depth=1 https://github.com/pulp/ansible-pulp.git
 if [ -n "$PULP_ROLES_PR_NUMBER" ]; then
@@ -45,25 +46,30 @@ if [ -n "$PULP_ROLES_PR_NUMBER" ]; then
   cd ..
 fi
 
-git clone --depth=1 https://github.com/pulp/pulpcore.git
+# When building for a release tag, let the pip install of pulp_cookbook
+# work out the dependencies using published PyPI packages, otherwise
+# install the development versions of the Pulp modules
+if [ -z "$TRAVIS_TAG" ]; then
 
-if [ -n "$PULP_PR_NUMBER" ]; then
-  cd pulpcore
-  git fetch --depth=1 origin +refs/pull/$PULP_PR_NUMBER/merge
-  git checkout FETCH_HEAD
-  cd ..
+  git clone --depth=1 https://github.com/pulp/pulpcore.git
+
+  if [ -n "$PULP_PR_NUMBER" ]; then
+    cd pulpcore
+    git fetch --depth=1 origin +refs/pull/$PULP_PR_NUMBER/merge
+    git checkout FETCH_HEAD
+    cd ..
+  fi
+
+
+  git clone --depth=1 https://github.com/pulp/pulpcore-plugin.git
+
+  if [ -n "$PULP_PLUGIN_PR_NUMBER" ]; then
+    cd pulpcore-plugin
+    git fetch --depth=1 origin +refs/pull/$PULP_PLUGIN_PR_NUMBER/merge
+    git checkout FETCH_HEAD
+    cd ..
+  fi
 fi
-
-
-git clone --depth=1 https://github.com/pulp/pulpcore-plugin.git
-
-if [ -n "$PULP_PLUGIN_PR_NUMBER" ]; then
-  cd pulpcore-plugin
-  git fetch --depth=1 origin +refs/pull/$PULP_PLUGIN_PR_NUMBER/merge
-  git checkout FETCH_HEAD
-  cd ..
-fi
-
 
 if [ -n "$PULP_SMASH_PR_NUMBER" ]; then
   git clone --depth=1 https://github.com/PulpQE/pulp-smash.git

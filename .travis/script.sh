@@ -111,16 +111,19 @@ show_logs_and_return_non_zero() {
     return "${rc}"
 }
 
-# Stop services started by ansible roles
-sudo systemctl stop pulp-worker* pulp-resource-manager pulp-content-app pulp-api
+## Stop services started by ansible roles
+#sudo systemctl stop pulp-worker* pulp-resource-manager pulp-content-app pulp-api
+#django-admin reset-admin-password -p admin
+## Start services with logs and coverage
 
-# Start services with logs and coverage
 export PULP_CONTENT_HOST=localhost:24816
-rq worker -n 'resource-manager@%h' -w 'pulpcore.tasking.worker.PulpWorker' -c 'pulpcore.rqconfig' >> ~/resource_manager.log 2>&1 &
-rq worker -n 'reserved-resource-worker-1@%h' -w 'pulpcore.tasking.worker.PulpWorker' -c 'pulpcore.rqconfig' >> ~/reserved_worker-1.log 2>&1 &
-gunicorn pulpcore.tests.functional.content_with_coverage:server --bind 'localhost:24816' --worker-class 'aiohttp.GunicornWebWorker' -w 2 >> ~/content_app.log 2>&1 &
-coverage run $(which django-admin) runserver 24817 --noreload >> ~/django_runserver.log 2>&1 &
+#rq worker -n 'resource-manager@%h' -w 'pulpcore.tasking.worker.PulpWorker' -c 'pulpcore.rqconfig' >> ~/resource_manager.log 2>&1 &
+#rq worker -n 'reserved-resource-worker-1@%h' -w 'pulpcore.tasking.worker.PulpWorker' -c 'pulpcore.rqconfig' >> ~/reserved_worker-1.log 2>&1 &
+#gunicorn pulpcore.tests.functional.content_with_coverage:server --bind 'localhost:24816' --worker-class 'aiohttp.GunicornWebWorker' -w 2 >> ~/content_app.log 2>&1 &
+#coverage run $(which django-admin) runserver 24817 --noreload >> ~/django_runserver.log 2>&1 &
 wait_for_pulp 20
+
+pip list
 
 # Run functional tests
 if [ -f $FUNC_TEST_SCRIPT ]; then
